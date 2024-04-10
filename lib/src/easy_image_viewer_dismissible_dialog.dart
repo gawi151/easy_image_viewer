@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'close_button_style.dart';
 import 'easy_image_provider.dart';
 import 'easy_image_view_pager.dart';
 
@@ -17,8 +18,7 @@ class EasyImageViewerDismissibleDialog extends StatefulWidget {
   final bool swipeDismissible;
   final bool doubleTapZoomable;
   final Color backgroundColor;
-  final String closeButtonTooltip;
-  final Color closeButtonColor;
+  final CloseButtonStyle closeButtonStyle;
 
   /// Refer to [showImageViewerPager] for the arguments
   const EasyImageViewerDismissibleDialog(
@@ -30,18 +30,15 @@ class EasyImageViewerDismissibleDialog extends StatefulWidget {
     this.useSafeArea = false,
     this.swipeDismissible = false,
     this.doubleTapZoomable = false,
+    required this.closeButtonStyle,
     required this.backgroundColor,
-    required this.closeButtonTooltip,
-    required this.closeButtonColor,
   }) : super(key: key);
 
   @override
-  State<EasyImageViewerDismissibleDialog> createState() =>
-      _EasyImageViewerDismissibleDialogState();
+  State<EasyImageViewerDismissibleDialog> createState() => _EasyImageViewerDismissibleDialogState();
 }
 
-class _EasyImageViewerDismissibleDialogState
-    extends State<EasyImageViewerDismissibleDialog> {
+class _EasyImageViewerDismissibleDialogState extends State<EasyImageViewerDismissibleDialog> {
   /// This is used to either activate or deactivate the ability to swipe-to-dismissed, based on
   /// whether the current image is zoomed in (scale > 0) or not.
   DismissDirection _dismissDirection = DismissDirection.down;
@@ -57,8 +54,7 @@ class _EasyImageViewerDismissibleDialogState
   @override
   void initState() {
     super.initState();
-    _pageController =
-        PageController(initialPage: widget.imageProvider.initialIndex);
+    _pageController = PageController(initialPage: widget.imageProvider.initialIndex);
     if (widget.onPageChanged != null) {
       _internalPageChangeListener = () {
         widget.onPageChanged!(_pageController.page?.round() ?? 0);
@@ -78,49 +74,85 @@ class _EasyImageViewerDismissibleDialogState
 
   @override
   Widget build(BuildContext context) {
+    double? closeButtonStartPosition;
+    double? closeButtonTopPosition;
+    double? closeButtonEndPosition;
+
+    switch (widget.closeButtonStyle.alignment) {
+      case CloseButtonAlignment.topLeft:
+        closeButtonStartPosition = 0;
+        closeButtonTopPosition = 0;
+        break;
+      case CloseButtonAlignment.topRight:
+        closeButtonEndPosition = 0;
+        closeButtonTopPosition = 0;
+        break;
+      case CloseButtonAlignment.bottomLeft:
+        closeButtonEndPosition = 0;
+        closeButtonTopPosition = 0;
+        break;
+      case CloseButtonAlignment.bottomRight:
+        closeButtonEndPosition = 0;
+        closeButtonTopPosition = 0;
+        break;
+    }
+
     // Remove this once we release v2.0.0 and can bump the minimum Flutter version to 3.13.0
     // ignore: deprecated_member_use
     final popScopeAwareDialog = WillPopScope(
-        onWillPop: () async {
-          _handleDismissal();
-          return true;
-        },
-        key: _popScopeKey,
-        child: Dialog(
-            backgroundColor: widget.backgroundColor,
-            insetPadding: const EdgeInsets.all(0),
-            // We set the shape here to ensure no rounded corners allow any of the
-            // underlying view to show. We want the whole background to be covered.
-            shape:
-                const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
-                children: <Widget>[
-                  EasyImageViewPager(
-                      easyImageProvider: widget.imageProvider,
-                      pageController: _pageController,
-                      doubleTapZoomable: widget.doubleTapZoomable,
-                      onScaleChanged: (scale) {
-                        setState(() {
-                          _dismissDirection = scale <= 1.0
-                              ? DismissDirection.down
-                              : DismissDirection.none;
-                        });
-                      }),
-                  Positioned(
-                      top: 5,
-                      right: 5,
-                      child: IconButton(
-                        icon: const Icon(Icons.close),
-                        color: widget.closeButtonColor,
-                        tooltip: widget.closeButtonTooltip,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _handleDismissal();
-                        },
-                      ))
-                ])));
+      onWillPop: () async {
+        _handleDismissal();
+        return true;
+      },
+      key: _popScopeKey,
+      child: Dialog(
+        backgroundColor: widget.backgroundColor,
+        insetPadding: const EdgeInsets.all(0),
+        // We set the shape here to ensure no rounded corners allow any of the
+        // underlying view to show. We want the whole background to be covered.
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        child: SafeArea(
+          top: widget.useSafeArea,
+          bottom: widget.useSafeArea,
+          left: widget.useSafeArea,
+          right: widget.useSafeArea,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: <Widget>[
+              EasyImageViewPager(
+                easyImageProvider: widget.imageProvider,
+                pageController: _pageController,
+                doubleTapZoomable: widget.doubleTapZoomable,
+                onScaleChanged: (scale) {
+                  setState(() {
+                    _dismissDirection = scale <= 1.0 ? DismissDirection.down : DismissDirection.none;
+                  });
+                },
+              ),
+              Positioned.directional(
+                textDirection: Directionality.of(context),
+                top: closeButtonTopPosition,
+                end: closeButtonEndPosition,
+                start: closeButtonStartPosition,
+                child: Padding(
+                  padding: widget.useSafeArea ? EdgeInsets.zero : const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    icon: widget.closeButtonStyle.icon ?? const Icon(Icons.close),
+                    color: widget.closeButtonStyle.color,
+                    tooltip: widget.closeButtonStyle.tooltip,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _handleDismissal();
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
 
     if (widget.swipeDismissible) {
       return Dismissible(

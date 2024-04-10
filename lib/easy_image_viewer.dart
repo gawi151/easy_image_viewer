@@ -2,6 +2,7 @@
 /// It supports pinch & zoom, and paging through multiple images.
 library easy_image_viewer;
 
+import 'package:easy_image_viewer/src/close_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,10 +17,10 @@ export 'src/multi_image_provider.dart' show MultiImageProvider;
 export 'src/easy_image_view.dart' show EasyImageView;
 export 'src/easy_image_view_pager.dart' show EasyImageViewPager;
 
+export 'src/close_button_style.dart' show CloseButtonAlignment, CloseButtonStyle;
+
 // Defined here so we don't repeat ourselves
 const _defaultBackgroundColor = Colors.black;
-const _defaultCloseButtonColor = Colors.white;
-const _defaultCloseButtonTooltip = 'Close';
 
 /// Shows the given [imageProvider] in a full-screen [Dialog].
 /// Setting [immersive] to false will prevent the top and bottom bars from being hidden.
@@ -32,25 +33,27 @@ const _defaultCloseButtonTooltip = 'Close';
 /// close button and is used for accessibility.
 /// The [closeButtonColor] defaults to white, but can be set to any other color.
 Future<Dialog?> showImageViewer(
-    BuildContext context, ImageProvider imageProvider,
-    {bool immersive = true,
-    void Function()? onViewerDismissed,
-    bool useSafeArea = false,
-    bool swipeDismissible = false,
-    bool doubleTapZoomable = false,
-    Color backgroundColor = _defaultBackgroundColor,
-    String closeButtonTooltip = _defaultCloseButtonTooltip,
-    Color closeButtonColor = _defaultCloseButtonColor}) {
-  return showImageViewerPager(context, SingleImageProvider(imageProvider),
-      immersive: immersive,
-      onViewerDismissed:
-          onViewerDismissed != null ? (_) => onViewerDismissed() : null,
-      useSafeArea: useSafeArea,
-      swipeDismissible: swipeDismissible,
-      doubleTapZoomable: doubleTapZoomable,
-      backgroundColor: backgroundColor,
-      closeButtonTooltip: closeButtonTooltip,
-      closeButtonColor: closeButtonColor);
+  BuildContext context,
+  ImageProvider imageProvider, {
+  bool immersive = true,
+  void Function()? onViewerDismissed,
+  bool useSafeArea = false,
+  bool swipeDismissible = false,
+  bool doubleTapZoomable = false,
+  Color backgroundColor = _defaultBackgroundColor,
+  CloseButtonStyle closeButtonStyle = const CloseButtonStyle(),
+}) {
+  return showImageViewerPager(
+    context,
+    SingleImageProvider(imageProvider),
+    immersive: immersive,
+    onViewerDismissed: onViewerDismissed != null ? (_) => onViewerDismissed() : null,
+    useSafeArea: useSafeArea,
+    swipeDismissible: swipeDismissible,
+    doubleTapZoomable: doubleTapZoomable,
+    backgroundColor: backgroundColor,
+    closeButtonStyle: closeButtonStyle,
+  );
 }
 
 /// Shows the images provided by the [imageProvider] in a full-screen PageView [Dialog].
@@ -67,16 +70,17 @@ Future<Dialog?> showImageViewer(
 /// close button and is used for accessibility.
 /// The [closeButtonColor] defaults to white, but can be set to any other color.
 Future<Dialog?> showImageViewerPager(
-    BuildContext context, EasyImageProvider imageProvider,
-    {bool immersive = true,
-    void Function(int)? onPageChanged,
-    void Function(int)? onViewerDismissed,
-    bool useSafeArea = false,
-    bool swipeDismissible = false,
-    bool doubleTapZoomable = false,
-    Color backgroundColor = _defaultBackgroundColor,
-    String closeButtonTooltip = _defaultCloseButtonTooltip,
-    Color closeButtonColor = _defaultCloseButtonColor}) {
+  BuildContext context,
+  EasyImageProvider imageProvider, {
+  bool immersive = true,
+  void Function(int)? onPageChanged,
+  void Function(int)? onViewerDismissed,
+  bool useSafeArea = false,
+  bool swipeDismissible = false,
+  bool doubleTapZoomable = false,
+  Color backgroundColor = _defaultBackgroundColor,
+  CloseButtonStyle closeButtonStyle = const CloseButtonStyle(),
+}) {
   if (immersive) {
     // Hide top and bottom bars
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
@@ -84,17 +88,18 @@ Future<Dialog?> showImageViewerPager(
 
   return showDialog<Dialog>(
       context: context,
-      useSafeArea: useSafeArea,
+      useSafeArea: false,
       builder: (context) {
-        return EasyImageViewerDismissibleDialog(imageProvider,
-            immersive: immersive,
-            onPageChanged: onPageChanged,
-            onViewerDismissed: onViewerDismissed,
-            useSafeArea: useSafeArea,
-            swipeDismissible: swipeDismissible,
-            doubleTapZoomable: doubleTapZoomable,
-            backgroundColor: backgroundColor,
-            closeButtonColor: closeButtonColor,
-            closeButtonTooltip: closeButtonTooltip);
+        return EasyImageViewerDismissibleDialog(
+          imageProvider,
+          immersive: immersive,
+          onPageChanged: onPageChanged,
+          onViewerDismissed: onViewerDismissed,
+          useSafeArea: useSafeArea,
+          swipeDismissible: swipeDismissible,
+          doubleTapZoomable: doubleTapZoomable,
+          backgroundColor: backgroundColor,
+          closeButtonStyle: closeButtonStyle,
+        );
       });
 }

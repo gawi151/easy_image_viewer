@@ -13,8 +13,9 @@ class MyApp extends StatelessWidget {
       title: 'EasyImageViewer Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        progressIndicatorTheme:
-            const ProgressIndicatorThemeData(color: Colors.green),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Colors.green,
+        ),
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'EasyImageViewer Demo'),
@@ -62,19 +63,17 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text("Show Single Image"),
               onPressed: () {
                 showImageViewer(
-                    context,
-                    Image.network("https://picsum.photos/id/1001/4912/3264")
-                        .image,
-                    swipeDismissible: true,
-                    doubleTapZoomable: true);
+                  context,
+                  Image.network("https://picsum.photos/id/1001/4912/3264").image,
+                  swipeDismissible: true,
+                  doubleTapZoomable: true,
+                );
               }),
           ElevatedButton(
               child: const Text("Show Multiple Images (Simple)"),
               onPressed: () {
-                MultiImageProvider multiImageProvider =
-                    MultiImageProvider(_imageProviders);
-                showImageViewerPager(context, multiImageProvider,
-                    swipeDismissible: true, doubleTapZoomable: true);
+                MultiImageProvider multiImageProvider = MultiImageProvider(_imageProviders);
+                showImageViewerPager(context, multiImageProvider, swipeDismissible: true, doubleTapZoomable: true);
               }),
           ElevatedButton(
               child: const Text("Show Multiple Images (Custom)"),
@@ -87,8 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       "https://picsum.photos/id/1005/4912/3264"
                     ].toList(),
                     initialIndex: 2);
-                showImageViewerPager(context, customImageProvider,
-                    onPageChanged: (page) {
+                showImageViewerPager(context, customImageProvider, onPageChanged: (page) {
                   // print("Page changed to $page");
                 }, onViewerDismissed: (page) {
                   // print("Dismissed while on page $page");
@@ -99,15 +97,13 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const AsyncDemoPage()),
+                  MaterialPageRoute(builder: (context) => const AsyncDemoPage()),
                 );
               }),
           ElevatedButton(
               child: const Text("Custom Progress Indicator"),
               onPressed: () {
-                CustomImageWidgetProvider customImageProvider =
-                    CustomImageWidgetProvider(
+                CustomImageWidgetProvider customImageProvider = CustomImageWidgetProvider(
                   imageUrls: [
                     "https://picsum.photos/id/1001/4912/3264",
                     "https://picsum.photos/id/1003/1181/1772",
@@ -124,8 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     context,
                     // Notice that this will cause an "unhandled exception" although an error handler is defined.
                     // This is a known Flutter issue, see https://github.com/flutter/flutter/issues/81931
-                    Image.network("https://thisisdefinitelynotavalidurl.com")
-                        .image,
+                    Image.network("https://thisisdefinitelynotavalidurl.com").image,
                     swipeDismissible: true,
                     doubleTapZoomable: true);
               }),
@@ -133,16 +128,11 @@ class _MyHomePageState extends State<MyHomePage> {
               // Tiny image just to test the EasyImageView constructor
               width: MediaQuery.of(context).size.width,
               height: 56,
-              child: EasyImageView(
-                  imageProvider:
-                      Image.network("https://picsum.photos/id/1001/4912/3264")
-                          .image)),
+              child: EasyImageView(imageProvider: Image.network("https://picsum.photos/id/1001/4912/3264").image)),
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height / 2.4,
-            child: EasyImageViewPager(
-                easyImageProvider: _easyEmbeddedImageProvider,
-                pageController: _pageController),
+            child: EasyImageViewPager(easyImageProvider: _easyEmbeddedImageProvider, pageController: _pageController),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -151,20 +141,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Text("<< Prev"),
                   onPressed: () {
                     final currentPage = _pageController.page?.toInt() ?? 0;
-                    _pageController.animateToPage(
-                        currentPage > 0 ? currentPage - 1 : 0,
-                        duration: _kDuration,
-                        curve: _kCurve);
+                    _pageController.animateToPage(currentPage > 0 ? currentPage - 1 : 0,
+                        duration: _kDuration, curve: _kCurve);
                   }),
               ElevatedButton(
                   child: const Text("Next >>"),
                   onPressed: () {
                     final currentPage = _pageController.page?.toInt() ?? 0;
                     final lastPage = _easyEmbeddedImageProvider.imageCount - 1;
-                    _pageController.animateToPage(
-                        currentPage < lastPage ? currentPage + 1 : lastPage,
-                        duration: _kDuration,
-                        curve: _kCurve);
+                    _pageController.animateToPage(currentPage < lastPage ? currentPage + 1 : lastPage,
+                        duration: _kDuration, curve: _kCurve);
                   }),
             ],
           ),
@@ -179,8 +165,7 @@ class CustomImageProvider extends EasyImageProvider {
   final int initialIndex;
   final List<String> imageUrls;
 
-  CustomImageProvider({required this.imageUrls, this.initialIndex = 0})
-      : super();
+  CustomImageProvider({required this.imageUrls, this.initialIndex = 0}) : super();
 
   @override
   ImageProvider<Object> imageBuilder(BuildContext context, int index) {
@@ -196,8 +181,7 @@ class CustomImageWidgetProvider extends EasyImageProvider {
   final int initialIndex;
   final List<String> imageUrls;
 
-  CustomImageWidgetProvider({required this.imageUrls, this.initialIndex = 0})
-      : super();
+  CustomImageWidgetProvider({required this.imageUrls, this.initialIndex = 0}) : super();
 
   @override
   ImageProvider<Object> imageBuilder(BuildContext context, int index) {
@@ -205,8 +189,7 @@ class CustomImageWidgetProvider extends EasyImageProvider {
   }
 
   @override
-  Widget progressIndicatorWidgetBuilder(BuildContext context, int index,
-      {double? value}) {
+  Widget progressIndicatorWidgetBuilder(BuildContext context, int index, {double? value}) {
     // Create a custom linear progress indicator
     // with a label showing the progress value
     return Column(
