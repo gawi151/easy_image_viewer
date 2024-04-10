@@ -44,8 +44,10 @@ void main() {
       expect(imageWidget is Image, true);
       expect((imageWidget as Image).image, redImageProvider);
 
-      expect(() => provider.imageWidgetBuilder(context, -1), throwsArgumentError);
-      expect(() => provider.imageWidgetBuilder(context, 1), throwsArgumentError);
+      expect(
+          () => provider.imageWidgetBuilder(context, -1), throwsArgumentError);
+      expect(
+          () => provider.imageWidgetBuilder(context, 1), throwsArgumentError);
     });
 
     testWidgets('should return the correct error widget per index',
@@ -59,12 +61,14 @@ void main() {
 
       final provider = SingleImageProvider(redImageProvider!);
 
-      final errorWidget = provider.errorWidgetBuilder(context, 0, 'error', null);
+      final errorWidget =
+          provider.errorWidgetBuilder(context, 0, 'error', null);
       expect(errorWidget is Center, true);
 
       await tester.pumpWidget(MediaQuery(
           data: const MediaQueryData(size: Size(600, 800)),
-          child: Directionality(textDirection: TextDirection.ltr, child: errorWidget)));
+          child: Directionality(
+              textDirection: TextDirection.ltr, child: errorWidget)));
 
       expect(find.text('🖼️💥🚫', skipOffstage: false), findsOneWidget);
     });

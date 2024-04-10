@@ -12,8 +12,8 @@ import 'package:flutter/widgets.dart';
 /// See https://github.com/flutter/flutter/blob/master/packages/flutter/test/widgets/image_test.dart#L2060
 class TestImageProvider extends ImageProvider<Object> {
   TestImageProvider({ImageStreamCompleter? streamCompleter}) {
-    _streamCompleter = streamCompleter
-      ?? OneFrameImageStreamCompleter(_completer.future);
+    _streamCompleter =
+        streamCompleter ?? OneFrameImageStreamCompleter(_completer.future);
   }
 
   final Completer<ImageInfo> _completer = Completer<ImageInfo>();
@@ -30,7 +30,8 @@ class TestImageProvider extends ImageProvider<Object> {
   }
 
   @override
-  void resolveStreamForKey(ImageConfiguration configuration, ImageStream stream, Object key, ImageErrorListener handleError) {
+  void resolveStreamForKey(ImageConfiguration configuration, ImageStream stream,
+      Object key, ImageErrorListener handleError) {
     lastResolvedConfiguration = configuration;
     super.resolveStreamForKey(configuration, stream, key, handleError);
   }

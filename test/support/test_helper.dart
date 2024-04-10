@@ -5,9 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// Helper method to create a sample image provider
 Future<ImageProvider> createColorImageProvider(Color color,
     {double scale = 1.0, int width = 500, int height = 500}) async {
-  
-  final ui.Image image = await createColorImage(color,
-      scale: scale, width: width, height: height);
+  final ui.Image image =
+      await createColorImage(color, scale: scale, width: width, height: height);
   final imageData = await image.toByteData(format: ui.ImageByteFormat.png);
   return MemoryImage(imageData!.buffer.asUint8List());
 }

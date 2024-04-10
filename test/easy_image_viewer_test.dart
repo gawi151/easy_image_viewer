@@ -82,8 +82,8 @@ void main() {
           Colors.blue,
           Colors.teal
         ];
-        imageProviders =
-            await Future.wait(colors.map((color) => createColorImageProvider(color)));
+        imageProviders = await Future.wait(
+            colors.map((color) => createColorImageProvider(color)));
       });
 
       final multiImageProvider = MultiImageProvider(imageProviders);
@@ -139,8 +139,8 @@ void main() {
           Colors.blue,
           Colors.teal
         ];
-        imageProviders =
-            await Future.wait(colors.map((color) => createColorImageProvider(color)));
+        imageProviders = await Future.wait(
+            colors.map((color) => createColorImageProvider(color)));
       });
 
       final multiImageProvider = MultiImageProvider(imageProviders);
@@ -183,8 +183,8 @@ void main() {
           Colors.blue,
           Colors.teal
         ];
-        imageProviders =
-            await Future.wait(colors.map((color) => createColorImageProvider(color)));
+        imageProviders = await Future.wait(
+            colors.map((color) => createColorImageProvider(color)));
       });
 
       final multiImageProvider =
@@ -226,8 +226,8 @@ void main() {
 
       await tester.runAsync(() async {
         const colors = [Colors.amber];
-        imageProviders =
-            await Future.wait(colors.map((color) => createColorImageProvider(color)));
+        imageProviders = await Future.wait(
+            colors.map((color) => createColorImageProvider(color)));
       });
 
       final multiImageProvider = MultiImageProvider(imageProviders);

@@ -10,7 +10,6 @@ class AsyncDemoPage extends StatefulWidget {
 }
 
 class _AsyncDemoPageState extends State<AsyncDemoPage> {
-
   final _pageController = PageController();
 
   /// Simulates a network fetch of image URLs
@@ -41,15 +40,14 @@ class _AsyncDemoPageState extends State<AsyncDemoPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             EasyImageProvider easyImageProvider = snapshot.data!;
-            return Center(child: 
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 2.0,
-                child: EasyImageViewPager(
-                    easyImageProvider: easyImageProvider,
-                    pageController: _pageController),
-              )
-            );
+            return Center(
+                child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 2.0,
+              child: EasyImageViewPager(
+                  easyImageProvider: easyImageProvider,
+                  pageController: _pageController),
+            ));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {

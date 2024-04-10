@@ -195,9 +195,12 @@ void main() {
       expect(lastScale, 2.0);
     });
 
-    testWidgets('should show progress indicator while loading', (WidgetTester tester) async {
-      final TestImageStreamCompleter streamCompleter = TestImageStreamCompleter();
-      final TestImageProvider imageProvider = TestImageProvider(streamCompleter: streamCompleter);
+    testWidgets('should show progress indicator while loading',
+        (WidgetTester tester) async {
+      final TestImageStreamCompleter streamCompleter =
+          TestImageStreamCompleter();
+      final TestImageProvider imageProvider =
+          TestImageProvider(streamCompleter: streamCompleter);
       ui.Image? finalImage;
 
       BuildContext context = await createTestBuildContext(tester);
@@ -208,42 +211,52 @@ void main() {
         finalImage = await createColorImage(Colors.green);
       });
 
-      streamCompleter.setData(chunkEvent: const ImageChunkEvent(cumulativeBytesLoaded: 1, expectedTotalBytes: 100));
-      
+      streamCompleter.setData(
+          chunkEvent: const ImageChunkEvent(
+              cumulativeBytesLoaded: 1, expectedTotalBytes: 100));
+
       Widget testWidget = MediaQuery(
           data: const MediaQueryData(size: Size(600, 800)),
           child: Directionality(
               textDirection: TextDirection.ltr,
-              child: EasyImageView.imageWidget(provider.imageWidgetBuilder(context, 0))));
+              child: EasyImageView.imageWidget(
+                  provider.imageWidgetBuilder(context, 0))));
 
       await tester.pumpWidget(testWidget);
 
       // Image widget, but no image yet
       final imageFinder = find.byType(RawImage);
-      expect(imageFinder, findsOneWidget); // we use a stack, so it's always there, but behind the progress indicator
+      expect(imageFinder,
+          findsOneWidget); // we use a stack, so it's always there, but behind the progress indicator
       var imageWidget = tester.firstWidget(imageFinder) as RawImage;
-      expect(imageWidget.image, isNull); 
+      expect(imageWidget.image, isNull);
 
       // Load 10% of the image
-      streamCompleter.setData(chunkEvent: const ImageChunkEvent(cumulativeBytesLoaded: 10, expectedTotalBytes: 100));
+      streamCompleter.setData(
+          chunkEvent: const ImageChunkEvent(
+              cumulativeBytesLoaded: 10, expectedTotalBytes: 100));
       await tester.pump();
 
       // Progress indicator
       final progressFinder = find.byType(CircularProgressIndicator);
       expect(progressFinder, findsOneWidget);
-      var progressWidget = tester.firstWidget(progressFinder) as CircularProgressIndicator;
+      var progressWidget =
+          tester.firstWidget(progressFinder) as CircularProgressIndicator;
       expect(progressWidget.value, 0.1); // 10 / 100
 
       // Load the rest of the image
-      streamCompleter.setData(chunkEvent: const ImageChunkEvent(cumulativeBytesLoaded: 100, expectedTotalBytes: 100));
+      streamCompleter.setData(
+          chunkEvent: const ImageChunkEvent(
+              cumulativeBytesLoaded: 100, expectedTotalBytes: 100));
       await tester.pump();
-      
+
       // Provide final image data
       streamCompleter.setData(imageInfo: ImageInfo(image: finalImage!));
       await tester.pump();
-      expect(imageFinder, findsOneWidget); // we use a stack, so it's always there, but behind the progress indicator
+      expect(imageFinder,
+          findsOneWidget); // we use a stack, so it's always there, but behind the progress indicator
       imageWidget = tester.firstWidget(imageFinder) as RawImage;
-      expect(imageWidget.image, isNotNull); 
+      expect(imageWidget.image, isNotNull);
     });
   });
 }

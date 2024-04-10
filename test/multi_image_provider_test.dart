@@ -61,12 +61,14 @@ void main() {
       final imageProviders = [redImageProvider!, greenImageProvider!];
       final provider = MultiImageProvider(imageProviders, initialIndex: 0);
 
-      final errorWidget = provider.errorWidgetBuilder(context, 0, 'error', null);
+      final errorWidget =
+          provider.errorWidgetBuilder(context, 0, 'error', null);
       expect(errorWidget is Center, true);
 
       await tester.pumpWidget(MediaQuery(
           data: const MediaQueryData(size: Size(600, 800)),
-          child: Directionality(textDirection: TextDirection.ltr, child: errorWidget)));
+          child: Directionality(
+              textDirection: TextDirection.ltr, child: errorWidget)));
 
       expect(find.text('🖼️💥🚫', skipOffstage: false), findsOneWidget);
     });
